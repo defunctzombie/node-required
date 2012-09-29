@@ -1,0 +1,22 @@
+{
+  "name": "required",
+  "version": "0.0.0",
+  "description": "traverse your script and identify dependencies from requires",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shtylman/node-required.git"
+  },
+  "keywords": [
+    "require",
+    "modules"
+  ],
+  "dependencies": {
+    "detective": "0.1.1"
+  },
+  "author": "Roman Shtylman <shtylman@gmail.com>",
+  "license": "MIT"
+}
