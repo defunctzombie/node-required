@@ -4,7 +4,9 @@
   "description": "traverse your script and identify dependencies from requires",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "test-generate": "GENERATE=true npm test",
+    "coverage": "NODE_ENV=test cover run ./node_modules/mocha/bin/_mocha && cover report html"
   },
   "repository": {
     "type": "git",

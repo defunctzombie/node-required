@@ -50,3 +50,11 @@ Each object in the array takes the following form:
 npm install required
 ```
 
+## tests
+
+Run tests with ```npm test```
+
+Rebuild the golden files with ```npm test-generate```
+
+Generate a coverage report (requires cover module) ```npm coverage```
+
