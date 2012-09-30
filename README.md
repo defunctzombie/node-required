@@ -54,7 +54,7 @@ npm install required
 
 Run tests with ```npm test```
 
-Rebuild the golden files with ```npm test-generate```
+Rebuild the golden files with ```npm run-script test-generate```
 
-Generate a coverage report (requires cover module) ```npm coverage```
+Generate a coverage report (requires cover module) ```npm run-script coverage```
 
