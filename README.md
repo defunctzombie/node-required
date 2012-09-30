@@ -1,4 +1,4 @@
-# required
+# required [![Build Status](https://secure.travis-ci.org/shtylman/node-required.png)](http://travis-ci.org/shtylman/node-required)
 
 identifies you what modules/files your script is using
 
