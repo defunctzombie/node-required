@@ -7,7 +7,7 @@ identifies you what modules/files your script is using
 ```javascript
 var required = require('required');
 
-require('/path/to/entry/source/file/js', function(err, deps) {
+required('/path/to/entry/source/file/js', function(err, deps) {
     // deps is an array of dependency objects
     // see the api section below for a description of the object
 });
