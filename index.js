@@ -77,9 +77,16 @@ function deps(filename, parent, cb) {
 /// the tree does have circular references when a child requires a parent
 module.exports.requires = function(filename, cb) {
 
+    var resolve = priv_module.Module._resolveLookupPaths(filename, null);
+    if (!resolve || resolve.length !== 2) {
+        return cb(new Error('unable to resolve paths for: ' + filename));
+    }
+
     // entry parent specifies the base node modules path
     var entry_parent = {
-        paths: priv_module.Module._nodeModulePaths(path.dirname(filename))
+        id: filename,
+        filename: filename,
+        paths: resolve[1]
     }
 
     deps(filename, entry_parent, function(err, details) {
