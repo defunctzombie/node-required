@@ -21,7 +21,7 @@ function add_test(filename) {
         var entry_path = __dirname + '/fixtures/' + filename;
         var dep_path = __dirname + '/fixtures/' + filename + '.dep';
 
-        required.requires(entry_path, function(err, actual) {
+        required(entry_path, function(err, actual) {
             assert.ok(!err, err);
 
             // decycle for json stringification

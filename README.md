@@ -2,9 +2,20 @@
 
 identifies you what modules/files your script is using
 
+## example
+
+```javascript
+var required = require('required');
+
+require('/path/to/entry/source/file/js', function(err, deps) {
+    // deps is an array of dependency objects
+    // see the api section below for a description of the object
+});
+```
+
 ## api
 
-### requires(filename, cb)
+### required(filename, cb)
 
 Read filename and traverse all of dependencies.
 
@@ -31,5 +42,11 @@ Each object in the array takes the following form:
         ...
     ]
 },
+```
+
+## install
+
+```shell
+npm install required
 ```
 

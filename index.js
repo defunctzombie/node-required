@@ -113,9 +113,17 @@ function deps(filename, parent, cb) {
     });
 }
 
+/// lookup the full path to our module with local name 'name'
+function lookup_path(name, parent) {
+    var resolved_module = priv_module.Module._resolveLookupPaths(name, parent);
+    var paths = resolved_module[1];
+
+    return priv_module.Module._findPath(name, paths);
+}
+
 /// process filename and callback with tree of dependencies
 /// the tree does have circular references when a child requires a parent
-module.exports.requires = function(filename, cb) {
+module.exports = function(filename, cb) {
 
     var resolve = priv_module.Module._resolveLookupPaths(filename, null);
     if (!resolve || resolve.length !== 2) {
@@ -136,10 +144,3 @@ module.exports.requires = function(filename, cb) {
     });
 }
 
-/// lookup the full path to our module with local name 'name'
-function lookup_path(name, parent) {
-    var resolved_module = priv_module.Module._resolveLookupPaths(name, parent);
-    var paths = resolved_module[1];
-
-    return priv_module.Module._findPath(name, paths);
-}
