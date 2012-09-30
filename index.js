@@ -10,6 +10,81 @@ var detective = require('detective');
 
 var cache = {};
 
+// inspect the source for dependencies
+function from_source(source, parent, cb) {
+
+    var requires = detective(source);
+    var result = [];
+
+    (function next() {
+        var req = requires.shift();
+        if (!req) {
+            return cb(null, result);
+        }
+
+        // short require name
+        var id = req;
+
+        // for now we just insert the native module into the tree
+        // and mark it as 'native'
+        // allow for whomever uses us to deal with natives as they wish
+        var native = natives[id];
+        if (native) {
+
+            // natives are cached by id
+            if (cache[id]) {
+                result.push(cache[id]);
+                return next();
+            }
+
+            // cache before calling compile to handle circular references
+            var res = cache[id] = {
+                id: id,
+                native: true
+            };
+
+            result.push(res);
+
+            from_source(native, parent, function(err, details) {
+                if (err) {
+                    return cb(err);
+                }
+
+                res.deps = details;
+                next();
+            });
+
+            return;
+        };
+
+        var full_path = lookup_path(req, parent);
+
+        if (!full_path) {
+            return cb(new Error('unable to find module: ' + req));
+        }
+
+        var new_parent = {
+            id: id,
+            filename: full_path,
+            paths: parent.paths
+        }
+
+        deps(full_path, new_parent, function(err, details) {
+            if (err) {
+                return cb(err);
+            }
+
+            result.push({
+                id: id,
+                filename: full_path,
+                deps: details
+            });
+
+            next();
+        });
+    })();
+}
+
 function deps(filename, parent, cb) {
 
     var cached = cache[filename];
@@ -22,54 +97,19 @@ function deps(filename, parent, cb) {
             return cb(err);
         }
 
-        var requires = detective(content);
-        var result = [];
+        // must be set before the compile call to handle circular references
+        var result = cache[filename] = [];
 
-        cache[filename] = result;
-
-        (function next(err) {
-            var req = requires.shift();
-            if (!req) {
-                return cb(null, result);
+        from_source(content, parent, function(err, details) {
+            if (err) {
+                return cb(err);
             }
 
-            // short require name
-            var id = req;
+            // push onto the result set so circular references are populated
+            result.push.call(result, details);
 
-            // for now we just insert the native module into the tree
-            // and mark it as 'native'
-            // allow for whomever uses us to deal with natives as they wish
-            if (is_native(id)) {
-                result.push({
-                    id: id,
-                    native: true
-                });
-
-                return next();
-            };
-
-            var full_path = lookup_path(req, parent);
-
-            var new_parent = {
-                id: id,
-                filename: full_path,
-                paths: parent.paths
-            }
-
-            deps(full_path, new_parent, function(err, details) {
-                if (err) {
-                    return cb(err);
-                }
-
-                result.push({
-                    id: id,
-                    filename: full_path,
-                    deps: details
-                });
-
-                next();
-            });
-        })();
+            return cb(err, details);
+        });
     });
 }
 
@@ -94,11 +134,6 @@ module.exports.requires = function(filename, cb) {
         cache = {};
         cb(err, details);
     });
-}
-
-/// private
-function is_native(name) {
-    return natives[name];
 }
 
 /// lookup the full path to our module with local name 'name'
