@@ -5,7 +5,7 @@
         "deps": [
             {
                 "id": "mod",
-                "filename": "/Users/shtylman/projects/node-required/test/node_modules/mod.js",
+                "filename": "node_modules/mod.js",
                 "deps": []
             }
         ]
