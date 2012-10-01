@@ -37,7 +37,6 @@ Each object in the array takes the following form:
 
     // an array of the dependencies for the file
     // each object is of the same form as described above
-    // this does not exist for native modules
     deps: [
         ...
     ]
