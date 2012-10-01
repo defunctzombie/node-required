@@ -69,7 +69,7 @@ function from_source(source, parent, cb) {
             paths: parent.paths
         }
 
-        deps(full_path, new_parent, function(err, details) {
+        from_filename(full_path, new_parent, function(err, deps) {
             if (err) {
                 return cb(err);
             }
@@ -77,7 +77,7 @@ function from_source(source, parent, cb) {
             result.push({
                 id: id,
                 filename: full_path,
-                deps: details
+                deps: deps
             });
 
             next();
@@ -85,7 +85,7 @@ function from_source(source, parent, cb) {
     })();
 }
 
-function deps(filename, parent, cb) {
+function from_filename(filename, parent, cb) {
 
     var cached = cache[filename];
     if (cached) {
@@ -100,15 +100,14 @@ function deps(filename, parent, cb) {
         // must be set before the compile call to handle circular references
         var result = cache[filename] = [];
 
-        from_source(content, parent, function(err, details) {
+        from_source(content, parent, function(err, deps) {
             if (err) {
                 return cb(err);
             }
 
             // push onto the result set so circular references are populated
-            result.push.call(result, details);
-
-            return cb(err, details);
+            result.push.apply(result, deps);
+            return cb(err, result);
         });
     });
 }
@@ -134,7 +133,7 @@ module.exports = function(filename, cb) {
         paths: paths
     };
 
-    deps(filename, entry_parent, function(err, details) {
+    from_filename(filename, entry_parent, function(err, details) {
         // clear the global cache
         cache = {};
         cb(err, details);
