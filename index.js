@@ -125,17 +125,14 @@ function lookup_path(name, parent) {
 /// the tree does have circular references when a child requires a parent
 module.exports = function(filename, cb) {
 
-    var resolve = priv_module.Module._resolveLookupPaths(filename, null);
-    if (!resolve || resolve.length !== 2) {
-        return cb(new Error('unable to resolve paths for: ' + filename));
-    }
+    var paths = priv_module.Module._nodeModulePaths(path.dirname(filename));
 
     // entry parent specifies the base node modules path
     var entry_parent = {
         id: filename,
         filename: filename,
-        paths: resolve[1]
-    }
+        paths: paths
+    };
 
     deps(filename, entry_parent, function(err, details) {
         // clear the global cache

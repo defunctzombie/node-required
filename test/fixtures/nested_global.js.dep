@@ -1,0 +1,13 @@
+[
+    {
+        "id": "./lib/global",
+        "filename": "lib/global.js",
+        "deps": [
+            {
+                "id": "mod",
+                "filename": "/Users/shtylman/projects/node-required/test/node_modules/mod.js",
+                "deps": []
+            }
+        ]
+    }
+]
