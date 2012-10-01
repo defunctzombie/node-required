@@ -16,6 +16,12 @@ function from_source(source, parent, cb) {
     var requires = detective(source);
     var result = [];
 
+    // deduplicate requires with the same name
+    // this avoids trying to process the require twice
+    requires = requires.filter(function(elem, idx) {
+        return requires.indexOf(elem) === idx;
+    });
+
     (function next() {
         var req = requires.shift();
         if (!req) {
