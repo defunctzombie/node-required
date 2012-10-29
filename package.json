@@ -1,6 +1,6 @@
 {
   "name": "required",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "traverse your script and identify dependencies from requires",
   "main": "index.js",
   "scripts": {
