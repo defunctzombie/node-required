@@ -69,10 +69,12 @@ function from_source(source, parent, cb) {
             return cb(new Error('unable to find module: ' + req));
         }
 
+        var paths = parent.paths.concat(node_module_paths(full_path));
+
         var new_parent = {
             id: id,
             filename: full_path,
-            paths: parent.paths
+            paths: paths
         }
 
         from_filename(full_path, new_parent, function(err, deps) {
@@ -126,11 +128,16 @@ function lookup_path(name, parent) {
     return priv_module.Module._findPath(name, paths);
 }
 
+/// return an array of node_module paths given a filename
+function node_module_paths(filename) {
+    return priv_module.Module._nodeModulePaths(path.dirname(filename));
+}
+
 /// process filename and callback with tree of dependencies
 /// the tree does have circular references when a child requires a parent
 module.exports = function(filename, cb) {
 
-    var paths = priv_module.Module._nodeModulePaths(path.dirname(filename));
+    var paths = node_module_paths(filename);
 
     // entry parent specifies the base node modules path
     var entry_parent = {

@@ -1,0 +1,13 @@
+[
+    {
+        "id": "modb",
+        "filename": "node_modules/modb/index.js",
+        "deps": [
+            {
+                "id": "modc",
+                "filename": "node_modules/modb/node_modules/modc.js",
+                "deps": []
+            }
+        ]
+    }
+]
