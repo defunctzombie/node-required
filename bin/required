@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+var required = require('..');
+
+var path = process.argv[2];
+
+if (!path) {
+    return console.error('Usage: required /path/to/module.js');
+}
+
+required(path, function(err, res) {
+    if (err) {
+        throw err;
+    }
+
+    console.dir(res);
+});
+
+// vim ft=javascript
