@@ -64,9 +64,9 @@ function from_source(source, parent, cb) {
         };
 
         var full_path = lookup_path(req, parent);
-
         if (!full_path) {
-            return cb(new Error('unable to find module: ' + req));
+            return cb(new Error('Cannot find module: \'' + req + '\' ' +
+                                'required from ' + parent.filename));
         }
 
         var paths = parent.paths.concat(node_module_paths(full_path));
