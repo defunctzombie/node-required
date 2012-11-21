@@ -133,9 +133,14 @@ function node_module_paths(filename) {
 
 /// process filename and callback with tree of dependencies
 /// the tree does have circular references when a child requires a parent
-module.exports = function(filename, cb) {
+module.exports = function(filename, opts, cb) {
+    if (typeof opts === 'function') {
+        cb = opts;
+        opts = {};
+    }
+    if (!opts) opts = {};
+    var cache = opts.cache || {};
 
-    var cache = {};
     var paths = node_module_paths(filename);
 
     // entry parent specifies the base node modules path
