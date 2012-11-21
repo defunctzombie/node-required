@@ -15,7 +15,7 @@ required('/path/to/entry/source/file/js', function(err, deps) {
 
 ## api
 
-### required(filename, cb)
+### required(filename, opts={}, cb)
 
 Reads the filename and traverses all the dependencies.
 
@@ -42,6 +42,9 @@ Each object in the array takes the following form:
     ]
 },
 ```
+
+You may optionally specify the `opts.cache` to use, which is an object of
+dependency keyed by the dependency id.
 
 ## install
 

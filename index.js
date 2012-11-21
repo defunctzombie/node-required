@@ -8,10 +8,8 @@ var fs = require('fs');
 // 3rd party
 var detective = require('detective');
 
-var cache = {};
-
 // inspect the source for dependencies
-function from_source(source, parent, cb) {
+function from_source(source, parent, cache, cb) {
 
     var requires = detective(source);
     var result = [];
@@ -51,7 +49,7 @@ function from_source(source, parent, cb) {
 
             result.push(res);
 
-            from_source(native, parent, function(err, details) {
+            from_source(native, parent, cache, function(err, details) {
                 if (err) {
                     return cb(err);
                 }
@@ -77,7 +75,7 @@ function from_source(source, parent, cb) {
             paths: paths
         }
 
-        from_filename(full_path, new_parent, function(err, deps) {
+        from_filename(full_path, new_parent, cache, function(err, deps) {
             if (err) {
                 return cb(err);
             }
@@ -93,7 +91,7 @@ function from_source(source, parent, cb) {
     })();
 }
 
-function from_filename(filename, parent, cb) {
+function from_filename(filename, parent, cache, cb) {
 
     var cached = cache[filename];
     if (cached) {
@@ -108,7 +106,7 @@ function from_filename(filename, parent, cb) {
         // must be set before the compile call to handle circular references
         var result = cache[filename] = [];
 
-        from_source(content, parent, function(err, deps) {
+        from_source(content, parent, cache, function(err, deps) {
             if (err) {
                 return cb(err);
             }
@@ -135,7 +133,13 @@ function node_module_paths(filename) {
 
 /// process filename and callback with tree of dependencies
 /// the tree does have circular references when a child requires a parent
-module.exports = function(filename, cb) {
+module.exports = function(filename, opts, cb) {
+    if (typeof opts === 'function') {
+        cb = opts;
+        opts = {};
+    }
+    if (!opts) opts = {};
+    var cache = opts.cache || {};
 
     var paths = node_module_paths(filename);
 
@@ -146,9 +150,7 @@ module.exports = function(filename, cb) {
         paths: paths
     };
 
-    from_filename(filename, entry_parent, function(err, details) {
-        // clear the global cache
-        cache = {};
+    from_filename(filename, entry_parent, cache, function(err, details) {
         cb(err, details);
     });
 }
