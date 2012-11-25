@@ -17,7 +17,7 @@
     "modules"
   ],
   "dependencies": {
-    "detective": "0.2.1"
+    "detective": "git://github.com/shtylman/node-detective.git#06d5cb"
   },
   "devDependencies": {
     "mocha": "~1.5.0",
