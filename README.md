@@ -15,7 +15,7 @@ required('/path/to/entry/source/file/js', function(err, deps) {
 
 ## api
 
-### required(filename, cb)
+### required(filename, [opt], cb)
 
 Reads the filename and traverses all the dependencies.
 
@@ -41,6 +41,15 @@ Each object in the array takes the following form:
         ...
     ]
 },
+```
+
+*opt* is an optional options object with the following defaults
+```
+{
+    // if true, then missing modules will be silently ignored
+    // useful if you don't care about some failed requires with native builds
+    ignoreMissing: false;
+}
 ```
 
 ## install

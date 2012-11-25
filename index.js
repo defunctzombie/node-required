@@ -9,7 +9,10 @@ var fs = require('fs');
 var detective = require('detective');
 
 // inspect the source for dependencies
-function from_source(source, parent, cache, cb) {
+function from_source(source, parent, opt, cb) {
+
+    var cache = opt.cache;
+    var ignore_missing = false || opt.ignoreMissing;
 
     var requires = detective(source);
     var result = [];
@@ -49,7 +52,7 @@ function from_source(source, parent, cache, cb) {
 
             result.push(res);
 
-            from_source(native, parent, cache, function(err, details) {
+            from_source(native, parent, opt, function(err, details) {
                 if (err) {
                     return cb(err);
                 }
@@ -63,6 +66,11 @@ function from_source(source, parent, cache, cb) {
 
         var full_path = lookup_path(req, parent);
         if (!full_path) {
+            // skip the dependency if we can't find it
+            if (ignore_missing) {
+                return cb();
+            }
+
             return cb(new Error('Cannot find module: \'' + req + '\' ' +
                                 'required from ' + parent.filename));
         }
@@ -75,7 +83,7 @@ function from_source(source, parent, cache, cb) {
             paths: paths
         }
 
-        from_filename(full_path, new_parent, cache, function(err, deps) {
+        from_filename(full_path, new_parent, opt, function(err, deps) {
             if (err) {
                 return cb(err);
             }
@@ -91,7 +99,9 @@ function from_source(source, parent, cache, cb) {
     })();
 }
 
-function from_filename(filename, parent, cache, cb) {
+function from_filename(filename, parent, opt, cb) {
+
+    var cache = opt.cache;
 
     var cached = cache[filename];
     if (cached) {
@@ -106,7 +116,7 @@ function from_filename(filename, parent, cache, cb) {
         // must be set before the compile call to handle circular references
         var result = cache[filename] = [];
 
-        from_source(content, parent, cache, function(err, deps) {
+        from_source(content, parent, opt, function(err, deps) {
             if (err) {
                 return cb(err);
             }
@@ -133,9 +143,16 @@ function node_module_paths(filename) {
 
 /// process filename and callback with tree of dependencies
 /// the tree does have circular references when a child requires a parent
-module.exports = function(filename, cb) {
+module.exports = function(filename, opt, cb) {
 
-    var cache = {};
+    if (typeof opt === 'function') {
+        cb = opt;
+        opt = {};
+    }
+
+    // add the cache storage
+    opt.cache = {};
+
     var paths = node_module_paths(filename);
 
     // entry parent specifies the base node modules path
@@ -145,10 +162,6 @@ module.exports = function(filename, cb) {
         paths: paths
     };
 
-    from_filename(filename, entry_parent, cache, function(err, details) {
-        // clear the global cache
-        cache = {};
-        cb(err, details);
-    });
-}
+    from_filename(filename, entry_parent, opt, cb);
+};
 
