@@ -8,12 +8,18 @@ if (!path) {
     return console.error('Usage: required /path/to/module.js');
 }
 
-required(path, function(err, res) {
-    if (err) {
-        throw err;
-    }
+var ee = required(path);
 
-    console.dir(res);
+ee.on('dep', function(dep) {
+    console.log(dep);
+});
+
+ee.on('error', function(err) {
+    console.error(err);
+});
+
+ee.on('end', function() {
+    process.exit();
 });
 
 // vim ft=javascript

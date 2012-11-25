@@ -9,13 +9,12 @@ var fs = require('fs');
 var detective = require('detective');
 
 // inspect the source for dependencies
-function from_source(source, parent, opt, cb) {
+function from_source(source, parent, opt, ev) {
 
     var cache = opt.cache;
     var ignore_missing = false || opt.ignoreMissing;
 
     var requires = detective(source);
-    var result = [];
 
     // deduplicate requires with the same name
     // this avoids trying to process the require twice
@@ -23,11 +22,41 @@ function from_source(source, parent, opt, cb) {
         return requires.indexOf(elem) === idx;
     });
 
-    (function next() {
-        var req = requires.shift();
-        if (!req) {
-            return cb(null, result);
+    var deps = {}
+    requires.reduce(function(prev, curr) {
+        var full_path = lookup_path(curr, parent);
+        prev[curr] = full_path;
+        return prev;
+    }, deps);
+
+    var lineage = [];
+
+    (function mk_lineage(parent) {
+        if (!parent) {
+            return;
         }
+
+        lineage.push({
+            id: parent.id,
+            filename: parent.filename
+        });
+        mk_lineage(parent.parent);
+    })(parent.parent);
+
+    var dep = {
+        src: source,
+        deps: deps,
+        lineage: lineage,
+    };
+
+    if (parent) {
+        dep.id = parent.id;
+    }
+
+    // emit the parent (us), children will follow
+    ev.emit('dep', dep);
+
+    requires.forEach(function(req) {
 
         // short require name
         var id = req;
@@ -40,28 +69,15 @@ function from_source(source, parent, opt, cb) {
 
             // natives are cached by id
             if (cache[id]) {
-                result.push(cache[id]);
                 return next();
             }
 
-            // cache before calling compile to handle circular references
-            var res = cache[id] = {
+            ev.emit('dep', {
                 id: id,
-                native: true
-            };
-
-            result.push(res);
-
-            from_source(native, parent, opt, function(err, details) {
-                if (err) {
-                    return cb(err);
-                }
-
-                res.deps = details;
-                next();
+                native: true,
             });
 
-            return;
+            return from_source(native, parent, opt, ev);
         };
 
         var full_path = lookup_path(req, parent);
@@ -80,26 +96,15 @@ function from_source(source, parent, opt, cb) {
         var new_parent = {
             id: id,
             filename: full_path,
-            paths: paths
+            paths: paths,
+            parent: parent
         }
 
-        from_filename(full_path, new_parent, opt, function(err, deps) {
-            if (err) {
-                return cb(err);
-            }
-
-            result.push({
-                id: id,
-                filename: full_path,
-                deps: deps
-            });
-
-            next();
-        });
-    })();
+        from_filename(full_path, new_parent, opt, ev);
+    });
 }
 
-function from_filename(filename, parent, opt, cb) {
+function from_filename(filename, parent, opt, ev) {
 
     var cache = opt.cache;
 
@@ -110,21 +115,10 @@ function from_filename(filename, parent, opt, cb) {
 
     fs.readFile(filename, 'utf8', function(err, content) {
         if (err) {
-            return cb(err);
+            return ev.emit('error', err);
         }
 
-        // must be set before the compile call to handle circular references
-        var result = cache[filename] = [];
-
-        from_source(content, parent, opt, function(err, deps) {
-            if (err) {
-                return cb(err);
-            }
-
-            // push onto the result set so circular references are populated
-            result.push.apply(result, deps);
-            return cb(err, result);
-        });
+        from_source(content, parent, opt, ev);
     });
 }
 
@@ -143,25 +137,25 @@ function node_module_paths(filename) {
 
 /// process filename and callback with tree of dependencies
 /// the tree does have circular references when a child requires a parent
-module.exports = function(filename, opt, cb) {
+module.exports = function(filename, opt) {
 
-    if (typeof opt === 'function') {
-        cb = opt;
-        opt = {};
-    }
+    opt = opt || {};
 
-    // add the cache storage
     opt.cache = {};
 
     var paths = node_module_paths(filename);
 
     // entry parent specifies the base node modules path
     var entry_parent = {
-        id: filename,
         filename: filename,
         paths: paths
     };
 
-    from_filename(filename, entry_parent, opt, cb);
+    var EventEmitter = require('events').EventEmitter;
+    var ee = new EventEmitter();
+
+    from_filename(filename, entry_parent, opt, ee);
+
+    return ee;
 };
 
