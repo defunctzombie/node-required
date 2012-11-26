@@ -68,7 +68,7 @@ function from_source(source, parent, opt, cb) {
         if (!full_path) {
             // skip the dependency if we can't find it
             if (ignore_missing) {
-                return cb();
+                return next();
             }
 
             return cb(new Error('Cannot find module: \'' + req + '\' ' +
