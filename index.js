@@ -151,7 +151,9 @@ module.exports = function(filename, opt, cb) {
     }
 
     // add the cache storage
-    opt.cache = {};
+    if (!opt.cache) {
+        opt.cache = {};
+    }
 
     var paths = node_module_paths(filename);
 
