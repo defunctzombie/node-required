@@ -151,13 +151,14 @@ function node_module_paths(filename) {
 /// the tree does have circular references when a child requires a parent
 module.exports = function(filename, opt, cb) {
 
+    opt = opt || {};
     if (typeof opt === 'function') {
         cb = opt;
         opt = {};
     }
 
     // add the cache storage
-    opt.cache = {};
+    opt.cache = opt.cache || {};
 
     var paths = node_module_paths(filename);
 
