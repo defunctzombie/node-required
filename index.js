@@ -84,16 +84,20 @@ function from_source(source, parent, opt, cb) {
             paths: paths
         }
 
-        from_filename(full_path, new_parent, opt, function(err, deps) {
+        from_filename(full_path, new_parent, opt, function(err, deps, src) {
             if (err) {
                 return cb(err);
             }
 
-            result.push({
+            var res = {
                 id: id,
                 filename: full_path,
                 deps: deps
-            });
+            };
+            if (opt.includeSource) {
+                res.source = src;
+            }
+            result.push(res);
 
             next();
         });
@@ -125,7 +129,7 @@ function from_filename(filename, parent, opt, cb) {
 
                 // push onto the result set so circular references are populated
                 result.push.apply(result, deps);
-                return cb(err, result);
+                return cb(err, result, content);
             });
         } catch (err) {
             err.message = filename + ': ' + err.message;
