@@ -49,7 +49,7 @@ Each object in the array takes the following form:
     // if true, then missing modules will be silently ignored
     // useful if you don't care about some failed requires with native builds
     ignoreMissing: false,
-    
+
     // if true, include the source contents for each file in the results
     // in a "source" field
     includeSource: false
