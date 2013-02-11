@@ -65,6 +65,7 @@ function from_source(source, parent, opt, cb) {
         };
 
         var full_path = lookup_path(req, parent);
+
         if (!full_path) {
             // skip the dependency if we can't find it
             if (ignore_missing) {
@@ -116,15 +117,20 @@ function from_filename(filename, parent, opt, cb) {
         // must be set before the compile call to handle circular references
         var result = cache[filename] = [];
 
-        from_source(content, parent, opt, function(err, deps) {
-            if (err) {
-                return cb(err);
-            }
+        try {
+            from_source(content, parent, opt, function(err, deps) {
+                if (err) {
+                    return cb(err);
+                }
 
-            // push onto the result set so circular references are populated
-            result.push.apply(result, deps);
-            return cb(err, result);
-        });
+                // push onto the result set so circular references are populated
+                result.push.apply(result, deps);
+                return cb(err, result);
+            });
+        } catch (err) {
+            err.message = filename + ': ' + err.message;
+            throw err;
+        };
     });
 }
 
