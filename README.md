@@ -55,11 +55,11 @@ Each object in the array takes the following form:
     includeSource: false,
 
     // optional function for required to use when resolving an id
+    // function(id, parent, cb);
     // id is the string for the call to require
     // parent is an object describing the calling file { filename: String, paths: [] }
-    resolve: function(id, parent, cb) {
-        cb(err, '/path/to/resolved/file.js');
-    }
+    // callback (err, '/path/to/resolved/file.js')
+    resolve: null
 }
 ```
 
