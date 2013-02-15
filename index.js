@@ -45,6 +45,9 @@ function from_source(source, parent, opt, cb) {
                 if (native) {
                     result.push({
                         id: id,
+                        core: true,
+                        // native is deprecated in favor of `core`
+                        // kept here for backwards compat
                         native: true
                     });
 

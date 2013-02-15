@@ -29,10 +29,12 @@ Each object in the array takes the following form:
     // i.e. the string in your "require" statement
     id: 'local-require-name',
 
-    native: // true if a native module (i.e. events, cryto, etc)
+    // true if core module (i.e. events, cryto, etc)
+    // core modules will not have any deps
+    core: true | false
 
     // full path to the entry file for the module
-    // this does not exist for native modules
+    // this does not exist for builtin modules
     filename: '/path/to/require/from/project/file.js',
 
     // an array of the dependencies for the file
