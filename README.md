@@ -61,7 +61,11 @@ Each object in the array takes the following form:
     // id is the string for the call to require
     // parent is an object describing the calling file { filename: String, paths: [] }
     // callback (err, '/path/to/resolved/file.js')
-    resolve: null
+    resolve: null,
+
+    // optional replacement for builtin detection of requires
+    // called with the file source
+    detective: null,
 }
 ```
 
