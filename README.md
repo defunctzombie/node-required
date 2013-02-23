@@ -60,7 +60,8 @@ Each object in the array takes the following form:
     // function(id, parent, cb);
     // id is the string for the call to require
     // parent is an object describing the calling file { filename: String, paths: [] }
-    // callback (err, '/path/to/resolved/file.js')
+    // callback (err, '/path/to/resolved/file.js' [, ignore])
+    // if ignore is true, required will not try to process the resulting path for deps
     resolve: null,
 
     // optional replacement for builtin detection of requires

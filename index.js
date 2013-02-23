@@ -34,7 +34,7 @@ function from_source(source, parent, opt, cb) {
 
         var native = natives[id];
 
-        var resolve = opt.resolve(req, parent, function(err, full_path) {
+        var resolve = opt.resolve(req, parent, function(err, full_path, ignore) {
             if (err) {
                 return cb(err);
             }
@@ -61,6 +61,18 @@ function from_source(source, parent, opt, cb) {
 
                 return cb(new Error('Cannot find module: \'' + req + '\' ' +
                                     'required from ' + parent.filename));
+            }
+
+            // ignore indicates we should not process dependencies for this file
+            // this is useful if we don't care about certain files being handled further
+            // we still want the dependency added to the deps of the file we processed
+            // but do not process this file or it's deps
+            if (ignore) {
+                result.push({
+                    id: id,
+                    filename: full_path
+                });
+                return next();
             }
 
             var paths = parent.paths.concat(node_module_paths(full_path));
