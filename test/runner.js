@@ -7,6 +7,8 @@ var cycle = require('cycle');
 // local
 var required = require('..');
 
+suite('default');
+
 function fix_path(key, value) {
     if (key !== 'filename') {
         return value;

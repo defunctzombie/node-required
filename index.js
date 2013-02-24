@@ -108,9 +108,12 @@ function from_filename(filename, parent, opt, cb) {
 
     var cache = opt.cache;
 
+    // wtf is this cache?
+    // appears to be the list of dependencies for this filename
+    // what it really should be is the info
     var cached = cache[filename];
     if (cached) {
-        return cb(null, cached);
+        return cb(null, cached.deps, cached.src);
     }
 
     fs.readFile(filename, 'utf8', function(err, content) {
@@ -119,7 +122,7 @@ function from_filename(filename, parent, opt, cb) {
         }
 
         // must be set before the compile call to handle circular references
-        var result = cache[filename] = [];
+        var result = cache[filename] = { deps: [] };
 
         try {
             from_source(content, parent, opt, function(err, deps) {
@@ -127,9 +130,14 @@ function from_filename(filename, parent, opt, cb) {
                     return cb(err);
                 }
 
-                // push onto the result set so circular references are populated
-                result.push.apply(result, deps);
-                return cb(err, result, content);
+                result.deps = deps;
+
+                // only cache source if caller will want the source
+                if (opt.includeSource) {
+                    result.src = content;
+                }
+
+                return cb(err, deps, content);
             });
         } catch (err) {
             err.message = filename + ': ' + err.message;

@@ -8,7 +8,11 @@ if (!path) {
     return console.error('Usage: required /path/to/module.js');
 }
 
-required(path, function(err, res) {
+var opt = {
+    includeSource: true,
+};
+
+required(path, opt, function(err, res) {
     if (err) {
         throw err;
     }
@@ -16,4 +20,4 @@ required(path, function(err, res) {
     console.dir(res);
 });
 
-// vim ft=javascript
+// vim: ft=javascript

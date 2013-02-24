@@ -1,0 +1,20 @@
+[
+    {
+        "id": "./one_local",
+        "filename": "one_local.js",
+        "deps": [
+            {
+                "id": "./none",
+                "filename": "none.js",
+                "deps": []
+            }
+        ]
+    },
+    {
+        "id": "./none",
+        "filename": "none.js",
+        "deps": {
+            "$ref": "$[0][\"deps\"][0][\"deps\"]"
+        }
+    }
+]
