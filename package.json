@@ -3,6 +3,9 @@
   "version": "0.3.1",
   "description": "traverse your script and identify dependencies from requires",
   "main": "index.js",
+  "bin": {
+    "required": "./bin/required"
+  },
   "scripts": {
     "test": "mocha",
     "test-generate": "GENERATE=true npm test",
@@ -17,7 +20,7 @@
     "modules"
   ],
   "dependencies": {
-    "detective": "git://github.com/shtylman/node-detective.git#06d5cb"
+    "detective": "2.2.0"
   },
   "devDependencies": {
     "mocha": "~1.5.0",
