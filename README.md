@@ -48,8 +48,11 @@ Each object in the array takes the following form:
 *opt* is an optional options object with the following defaults
 ```
 {
-    // if true, then missing modules will be silently ignored
-    // useful if you don't care about some failed requires with native builds
+    // if true, then missing modules will be silently ignored.
+    // useful if you don't care about some failed requires with native builds.
+    // if you pass a function instead of true, the function will be invoked
+    // with this signature: `yourFn(missingModuleName, parentSourceFilePath)`,
+    // e.g. `ignoreMissing: function(name, parent) { /* ... */ }`
     ignoreMissing: false,
 
     // if true, include the source contents for each file in the results
