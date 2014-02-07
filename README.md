@@ -19,7 +19,7 @@ required('/path/to/entry/source/file/js', function(err, deps) {
 
 Reads the filename and traverses all the dependencies.
 
-The return result to callback is (err, details) where details is and array of dependencies for the file.
+The return result to callback is (err, details) where details is an array of dependencies for the file.
 
 Each object in the array takes the following form:
 
