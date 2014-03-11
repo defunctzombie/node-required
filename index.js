@@ -56,6 +56,9 @@ function from_source(source, parent, opt, cb) {
 
                 // skip the dependency if we can't find it
                 if (ignore_missing) {
+                    if (typeof ignore_missing === 'function') {
+                        ignore_missing(req, parent.filename)
+                    }
                     return next();
                 }
 
