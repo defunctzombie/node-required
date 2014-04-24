@@ -20,7 +20,7 @@
     "modules"
   ],
   "dependencies": {
-    "detective": "2.2.0"
+    "detective": "3.1.0"
   },
   "devDependencies": {
     "mocha": "~1.5.0",
