@@ -17,7 +17,7 @@ required('/path/to/entry/source/file/js', function(err, deps) {
 
 ### required(filename, [opt], cb)
 
-Reads the filename and traverses all the dependencies.
+Reads the filename and traverses all of the dependencies.
 
 The return result to callback is (err, details) where details is an array of dependencies for the file.
 
@@ -45,7 +45,7 @@ Each object in the array takes the following form:
 },
 ```
 
-*opt* is an optional options object with the following defaults
+*opt* is an optional options object with the following defaults:
 ```
 {
     // if true, then missing modules will be silently ignored.
