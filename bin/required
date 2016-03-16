@@ -9,8 +9,7 @@ if (!path) {
 }
 
 var opt = {
-    includeSource: true,
-    silent: true
+    includeSource: true
 };
 
 required(path, opt, function(err, res) {

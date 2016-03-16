@@ -13,6 +13,7 @@ function from_source(source, parent, opt, cb) {
 
     var cache = opt.cache;
     var ignore_missing = false || opt.ignoreMissing;
+    opt.silent = true;
 
     var requires = (opt.detective || detective)(source, opt);
     var result = [];
