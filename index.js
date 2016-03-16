@@ -14,7 +14,7 @@ function from_source(source, parent, opt, cb) {
     var cache = opt.cache;
     var ignore_missing = false || opt.ignoreMissing;
 
-    var requires = (opt.detective || detective)(source);
+    var requires = (opt.detective || detective)(source, opt);
     var result = [];
 
     // deduplicate requires with the same name
