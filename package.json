@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/josephroffey/node-required.git"
+    "url": "git://github.com/shtylman/node-required.git"
   },
   "keywords": [
     "require",
@@ -26,6 +26,6 @@
     "mocha": "~1.5.0",
     "cycle": "1.0.0"
   },
-  "author": "Joseph Roffey <joseph.roffey@silvercurve.co.uk>",
+  "author": "Roman Shtylman <shtylman@gmail.com>",
   "license": "MIT"
 }
